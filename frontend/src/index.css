@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&family=Roboto+Slab:wght@300;400;500;600;800&family=Rubik:wght@400;500;700&family=Work+Sans&display=swap');
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #05101c;
+  color: white;
+  font-family: 'Roboto Slab', serif;
+
+}
+
+.image-inverted {
+  filter: invert(100%);
+}
+
+.nav-link {
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-left: 10px;
+  margin-right: 10px;
+  text-decoration: none;
+  border-radius: 12px;
+  padding: 8px 20px;
+  letter-spacing: 1px;
+}
+
+.Mui-focused fieldset {
+  border-color: white !important
+}
