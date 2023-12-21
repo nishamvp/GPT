@@ -147,7 +147,7 @@ const ChatPage = () => {
       >
         <Typography
           sx={{
-            fontSize: { md: "35px", lg: "3rem", sm: "30px" },
+            fontSize: { md: "35px", lg: "3rem", sm: "30px", xs: "30px" },
             color: "white",
             mb: 2,
             mx: "auto",
@@ -181,8 +181,8 @@ const ChatPage = () => {
         </Box>
         <div
           style={{
-            width: "97%",
-            padding: "20px",
+            width: "100%",
+
             borderRadius: 8,
             backgroundColor: "rgb(17,27,39)",
             display: "flex",
@@ -193,7 +193,7 @@ const ChatPage = () => {
               border: "none",
               width: "100%",
               fontSize: "20px",
-              padding: "10px",
+              padding: "20px",
               color: "white",
               outline: "none",
               backgroundColor: "transparent",
@@ -203,7 +203,7 @@ const ChatPage = () => {
           />
 
           <IconButton
-            sx={{ color: "white", ml: "auto" }}
+            sx={{ color: "white", ml: "auto", mx: 1 }}
             onClick={handleSubmit}
           >
             <IoMdSend />
