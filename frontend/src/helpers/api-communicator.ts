@@ -27,5 +27,14 @@ const sendChatRequest = async (message:string) => {
   return data;
 };
 
+const getAllChats = async () => {
+  const response = await axios.get("/chat/all-chats");
+  if (response.status !== 200) {
+    throw new Error("Unable to send chat");
+  }
+  const data = await response.data;
+  return data;
+};
 
-export { loginUser,checkAuthStatus,sendChatRequest };
+
+export { loginUser,checkAuthStatus,sendChatRequest,getAllChats };

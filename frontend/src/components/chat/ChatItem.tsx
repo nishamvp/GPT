@@ -1,19 +1,54 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { coldarkDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import hljs from "highlight.js";
+
+
+const extraCodeFromString = (message: string) => {
+  if (message.includes("```")) {
+    const blocks = message.split("```");
+    return blocks;
+  }
+};
+
+const isCodeBlock = (str: string) => {
+  if (
+    str.includes("=") ||
+    str.includes(",") ||
+    str.includes("{") ||
+    str.includes("}") ||
+    str.includes("[") ||
+    str.includes("]") ||
+    str.includes(",") ||
+    str.includes("#") ||
+    str.includes("//")
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const detectLanguage = (code: string) => {
+  const result = hljs.highlightAuto(code);
+  return result.language || "plaintext";
+};
 
 const ChatItem = ({
   role,
   content,
-  
 }: {
   role: "user" | "assistant";
   content: string;
 }) => {
+  
   const auth = useAuth();
+  
+
+  const messageBlocks = extraCodeFromString(content);
 
   return (
     <Box
- 
       sx={{
         display: "flex",
         mt: 3,
@@ -43,7 +78,27 @@ const ChatItem = ({
         )}
       </Avatar>
       <Box>
-        <Typography sx={{ fontSize: "20px" }}>{content}</Typography>
+        {!messageBlocks && (
+          <Typography sx={{ fontSize: "20px" }}>{content}</Typography>
+        )}
+        {messageBlocks &&
+          messageBlocks.length &&
+          messageBlocks.map((block) =>
+            isCodeBlock(block) ? (
+              <>
+                <SyntaxHighlighter
+                  language={detectLanguage(block)}
+                  style={coldarkDark}
+                >
+                  {block}
+                </SyntaxHighlighter>
+              </>
+            ) : (
+              <>
+                <Typography sx={{ fontSize: "20px" }}>{content}</Typography>
+              </>
+            )
+          )}
       </Box>
     </Box>
   );
