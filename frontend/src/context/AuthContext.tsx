@@ -5,7 +5,12 @@ import {
   useEffect,
   useState,
 } from "react";
-import { checkAuthStatus, loginUser } from "../helpers/api-communicator";
+import {
+  checkAuthStatus,
+  loginUser,
+  logoutUser,
+  signupUser,
+} from "../helpers/api-communicator";
 
 type User = {
   name: String;
@@ -27,11 +32,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     const checkStatus = async () => {
-     const data =  await checkAuthStatus();
-     if (data) {
-      setUser({ email: data.email, name: data.name });
-      setIsLoggedIn(true);
-    }
+      const data = await checkAuthStatus();
+      if (data) {
+        setUser({ email: data.email, name: data.name });
+        setIsLoggedIn(true);
+      }
     };
     checkStatus();
   }, []);
@@ -43,8 +48,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoggedIn(true);
     }
   };
-  const signup = async (name: String, email: String, password: String) => {};
-  const logout = async () => {};
+  const signup = async (name: String, email: String, password: String) => {
+    const data = await signupUser(name, email, password);
+    if (data) {
+      setUser({ name: data.name, email: data.email });
+      setIsLoggedIn(true);
+    }
+  };
+  const logout = async () => {
+    await logoutUser();
+    setIsLoggedIn(false);
+    setUser(null);
+    window.location.reload();
+  };
 
   const value = {
     isLoggedIn,

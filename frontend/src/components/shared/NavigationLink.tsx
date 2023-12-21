@@ -10,11 +10,11 @@ type Props = {
 
 const NavigationLink = (props: Props) => {
   return (
-    <Link 
+    <Link
+      onClick={props.onClick}
       to={props.to}
       style={{ background: props.bg, color: props.textColor }}
       className="nav-link"
-      onClick={props.onClick}
     >
       {props.text}
     </Link>

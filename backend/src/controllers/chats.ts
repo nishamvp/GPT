@@ -46,9 +46,26 @@ export const getAllChats = async (req: Request, res: Response) => {
     if (user._id.toString() !== id) {
       return res.status(401).json({ message: "Permissions didn't match" });
     }
-    return res
-      .status(200)
-      .json({ message: "Ok", chats:user.chats });
+    return res.status(200).json({ message: "Ok", chats: user.chats });
+  } catch (error) {
+    return res.status(500).json({ message: "ERROR", cause: error.message });
+  }
+};
+
+export const clearChats = async (req: Request, res: Response) => {
+  try {
+    const { id } = res.locals.jwtData;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(401).json({ message: "User not registered" });
+    }
+    if (user._id.toString() !== id) {
+      return res.status(401).json({ message: "Permissions didn't match" });
+    }
+    //@ts-ignore
+    user.chats = [];
+    user.save();
+    return res.status(200).json({ message: "Ok" });
   } catch (error) {
     return res.status(500).json({ message: "ERROR", cause: error.message });
   }

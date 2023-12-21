@@ -43,7 +43,7 @@ export const userSignup = async (req: Request, res: Response) => {
         httpOnly: true,
         signed: true,
       });
-      res.status(201).json({
+      return res.status(201).json({
         message: "User created",
         id: newUser._id.toString(),
         name: newUser.name,
@@ -107,6 +107,28 @@ export const authStatus = async (req: Request, res: Response) => {
     return res
       .status(200)
       .json({ message: "Ok", name: user.name, email: user.email });
+  } catch (error) {
+    return res.status(500).json({ message: "ERROR", cause: error.message });
+  }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    const { id } = res.locals.jwtData;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(401).json({ message: "User not registered" });
+    }
+    if (user._id.toString() !== id) {
+      return res.status(401).json({ message: "Permissions didn't match" });
+    }
+    res.clearCookie(COOKIE_NAME, {
+      path: "/",
+      domain: "localhost",
+      httpOnly: true,
+      signed: true,
+    });
+    res.status(200).json({ message: "Logout Successfully.." });
   } catch (error) {
     return res.status(500).json({ message: "ERROR", cause: error.message });
   }

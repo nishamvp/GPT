@@ -3,8 +3,12 @@ import CustomizedInput from "../components/shared/CustomizedInput.tsx";
 import { IoIosLogIn } from "react-icons/io";
 import { useAuth } from "../context/AuthContext.tsx";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const LoginPage = () => {
+
+  const navigate = useNavigate();
   const auth = useAuth();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -14,12 +18,18 @@ const LoginPage = () => {
     try {
       toast.loading("Signing In", { id: "login" });
       await auth?.login(email, password);
+      navigate("/");
       toast.success("Signed In Successfully..", { id: "login" });
     } catch (error) {
       console.log(error);
       toast.error("Signed In Failed..", { id: "login" });
     }
   };
+  useEffect(() => {
+    if (auth?.isLoggedIn) {
+     return navigate("/");
+    }
+  }, [auth]);
   return (
     <Box width={"100%"} height={"100%"} display={"flex"} flex={1}>
       <Box display={{ md: "flex", sm: "none", xs: "none" }} padding={8} mt={8}>

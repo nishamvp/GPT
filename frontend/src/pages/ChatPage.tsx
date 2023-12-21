@@ -2,16 +2,23 @@ import { Box, Avatar, Typography, Button, IconButton } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import red from "@mui/material/colors/red";
 import ChatItem from "../components/chat/ChatItem";
-import { IoMdSend } from "react-icons/io";
-import { useLayoutEffect, useRef, useState } from "react";
-import { getAllChats, sendChatRequest } from "../helpers/api-communicator";
+import { IoMdReturnLeft, IoMdSend } from "react-icons/io";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  clearChats,
+  getAllChats,
+  sendChatRequest,
+} from "../helpers/api-communicator";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 const ChatPage = () => {
   type Message = {
     role: "assistant" | "user";
     content: string;
   };
   const auth = useAuth();
+  const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
 
@@ -30,15 +37,40 @@ const ChatPage = () => {
   useLayoutEffect(() => {
     if (auth?.isLoggedIn && auth.user) {
       toast.loading("Loading Chats", { id: "loadchats" });
-      getAllChats().then(({ data }) => {
-        setChatMessages(data);
-        toast.success("Chats is loaded successfully..",{ id: "loadchats" });
-      }).catch(error=>{
-        console.log(error)
-        toast.error("Error occured while loading chats",{ id: "loadchats" });
-      })
+      getAllChats()
+        .then(({ data }) => {
+          setChatMessages(data);
+          toast.success("Chats is loaded successfully..", { id: "loadchats" });
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error("Error occured while loading chats", { id: "loadchats" });
+        });
     }
   }, [auth]);
+
+  useEffect(() => {
+    if (auth?.isLoggedIn) {
+      return navigate("/chat");
+    }
+    return navigate("/login");
+  }, [auth]);
+
+  const handleClearChats = async () => {
+    try {
+      toast.loading("Loading", { id: "deletechats" });
+      const data = await clearChats();
+      if (data) {
+        setChatMessages([]);
+        toast.success("Successfully cleared chat messages", {
+          id: "deletechats",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Deleting chats failed", { id: "deletechats" });
+    }
+  };
 
   return (
     <Box
@@ -89,6 +121,7 @@ const ChatPage = () => {
             personal information
           </Typography>
           <Button
+            onClick={handleClearChats}
             sx={{
               width: "200px",
 
@@ -136,7 +169,7 @@ const ChatPage = () => {
             mx: "auto",
           }}
         >
-          {chatMessages.map((chat, index) => (
+          {chatMessages?.map((chat, index) => (
             <div>
               <ChatItem
                 role={chat.role as "assistant" | "user"}
